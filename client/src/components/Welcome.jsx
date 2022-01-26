@@ -4,16 +4,19 @@ import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 
 import { Loader } from ".";
+import { TransactionContext } from "../context/TransactionContext";
 
 const WalletButton = ({ classProps, text, onClick }) => {
   return (
     <button
       onClick={onClick}
-      class={`relative inline-flex items-center justify-center p-4 px-5 py-3 overflow-hidden font-medium text-indigo-600 transition duration-300 ease-out rounded-full shadow-xl group hover:ring-1 hover:ring-purple-500`}>
-      <span class='absolute inset-0 w-full h-full bg-gradient-to-br from-blue-600 via-purple-600 to-pink-700'></span>
-      <span class='absolute bottom-0 right-0 block w-64 h-64 mb-32 mr-4 transition duration-500 origin-bottom-left transform rotate-45 translate-x-24 bg-pink-500 rounded-full opacity-30 group-hover:rotate-90 ease'></span>
+      className={`relative inline-flex items-center justify-center p-4 px-5 py-3 overflow-hidden font-medium text-indigo-600 transition duration-300 ease-out rounded-full shadow-xl group hover:ring-1 hover:ring-purple-500 w-full m-2`}>
+      <span className='absolute inset-0 w-full h-full bg-gradient-to-br from-blue-600 via-purple-600 to-pink-700'></span>
+      <span className='absolute bottom-0 right-0 block w-64 h-64 mb-32 mr-4 transition duration-500 origin-bottom-left transform rotate-45 translate-x-24 bg-pink-500 rounded-full opacity-30 group-hover:rotate-90 ease'></span>
       <AiFillPlayCircle className='text-white mr-2' />
-      <span class='relative text-white text-base font-semibold'>{text}</span>
+      <span className='relative text-white text-base font-semibold'>
+        {text}
+      </span>
     </button>
   );
 };
@@ -32,15 +35,21 @@ const companyCommonStyles =
   "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
 const Welcome = () => {
-  function connectWallet() {
-    return null;
-  }
+  const {
+    connectWallet,
+    currentAccount,
+    formData,
+    setFormData,
+    handleChange,
+    sendTransaction,
+  } = useContext(TransactionContext);
 
-  function handleSubmit() {
-    return null;
-  }
-  function handleChange() {
-    return null;
+  function handleSubmit(e) {
+    const { addressTo, amount, keyword, message } = formData;
+    e.preventDefault();
+    if (!addressTo || !amount || !keyword || !message) return;
+
+    sendTransaction();
   }
   return (
     <div className='flex w-full justify-center items-center'>
@@ -53,8 +62,9 @@ const Welcome = () => {
             Explore the crypto world. Buy and sell cryptocurrencies easily on
             Krypto.
           </p>
-
-          <WalletButton text='Connect Wallet' onClick={connectWallet} />
+          {!currentAccount && (
+            <WalletButton text='Connect Wallet' onClick={connectWallet} />
+          )}
 
           <div className='grid sm:grid-cols-3 grid-cols-2 w-full mt-10'>
             <div className={`rounded-tl-2xl ${companyCommonStyles}`}>
@@ -119,7 +129,7 @@ const Welcome = () => {
 
             <div className='h-[1px] w-full bg-gray-400 my-2' />
 
-            {true ? (
+            {false ? (
               <Loader />
             ) : (
               <button
